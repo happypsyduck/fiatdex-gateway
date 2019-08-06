@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="text/html; charset=UTF-8" http-equiv="content-type">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Simple FiatDex Gateway</title>
+
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap.js"></script>
+<link rel="stylesheet" href="css/bootstrap.css" >
+<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+<script src="js/bignumber.js"></script>
+<script src="js/interface.js"></script>
+<link rel="stylesheet" href="css/ui.css" >
+<link rel="shortcut icon" href="icon.png" type="image/png">
+
+</head>
+
+<body>
+
+<div class="container marketing">
+	<div class="row featurette">
+		<div class="col-md-8 col-md-offset-2" style="text-align: center; margin-bottom: 20px; margin-top: 50px;">
+			<span style="font-size: 48px;"><strong>FiatDex</strong> <span style="color: grey;">Gateway</span><br></span>
+			<span style="font-size: 16px;">A simple web interface to interact with the FiatDex protocol, a trustless and decentralized fiat to crypto
+				swap method. Read the <a href="whitepaper.docx" target="_blank">whitepaper</a>.</span><br><br>
+			<div id="metamask_banner" onclick="metamaskButtonClick();">
+				<span id="metamask_text">Install MetaMask to interact with Ethereum blockchain</span><br>
+				<span style="font-size: 12px;">Contract: <strong><span id="contract_id">N/A</span></strong></span>
+			</div>
+		</div>
+		<div class="col-md-8 col-md-offset-2" style="margin-bottom: 75px; margin-top: 25px;">
+			<div class="row featurette">
+				<div class="col-md-6" id="send_eth_button" onclick="togglePage(1);">
+					Sending ETH
+				</div>
+				<div class="col-md-6" id="get_eth_button" onclick="togglePage(2);">
+					Receiving ETH
+				</div>
+			</div>
+			<div class="row featurette" style="background-color: rgb(240,240,240); border-radius: 0px 0px 4px 4px; padding-bottom: 20px;">
+				<div class="col-md-12">
+					<div id="send_eth_tradebox" style="margin-top: 10px;" class="row">
+						<div class="col-md-8" style="padding: 2px;">
+							<input type="text" class="form-control" id="send_eth_id" style="height: 35px;" placeholder="Enter a tradeID">
+						</div>
+						<div class="col-md-4" style="text-align: center; padding: 2px;">
+							<button id="new_tradeID_button" style="height: 35px; width: 90%;" onclick="generateID();">Generate New</button>
+						</div>
+					</div>
+					<div id="get_eth_tradebox" style="margin-top: 10px; display: none; padding-left: 10px; padding-right: 10px;" class="row">
+						<div class="col-md-12" style="padding: 2px; text-align: center;">
+							<input type="text" class="form-control" id="get_eth_id" style="height: 35px;" placeholder="Enter the tradeID">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12" style="background-color: rgb(60,60,60); margin-top: 10px; margin-bottom: 10px; padding: 20px; color: white;">
+					<div style="display: none;" id="trade_status_window">
+						<table style="width: 100%;">
+							<tr>
+								<td style="text-align: left; font-weight: bold;">Status:</td>
+								<td style="text-align: right; color: rgb(255,100,100); font-weight: bold;" id="trade_status">N/A</td>
+							</tr>
+							<tr>
+								<td style="text-align: left; font-weight: bold;">Opened Time:</td>
+								<td style="text-align: right;" id="open_time">N/A</td>
+							</tr>
+							<tr>
+								<td style="text-align: left; font-weight: bold;">Trade Amount:</td>
+								<td style="text-align: right;" id="trade_amount">N/A</td>
+							</tr>
+							<tr>
+								<td style="text-align: left; font-weight: bold;">Collateral Required:</td>
+								<td style="text-align: right;" id="eth_collateral">N/A</td>
+							</tr>
+							<tr style="display: none;" id="fee_status">
+								<td style="text-align: left; font-weight: bold;">Trade Fee:</td>
+								<td style="text-align: right;" id="trade_fee">N/A</td>
+							</tr>
+						</table>
+					</div>
+					<div style="text-align: center;" id="loading_status_window">
+						Please Enter a Trade ID (MetaMask must be connected)
+					</div>
+				</div>
+				<div style="text-align: center;">
+					<div id="send_eth_amount" style="padding: 10px; line-height: 5px; display: none;">
+						<input type="text" class="form-control" id="send_eth_amount_input" autocomplete="off" oninput="calculateCollateral();" placeholder="Amount of ETH going to fiat trader">
+						<br>
+						<input type="text" class="form-control" id="send_eth_fiataddress" placeholder="Fiat trader ETH address">
+						<br><br>
+						<label>Collateral Required: <span id="send_eth_collateral">0</span> ETH</label>			
+					</div>
+					<div id="send_eth_actions" style="display: none;">
+						<div id="open_swap_button" style="margin-top: 10px;">
+							<button style="font-size: 26px; width: 200px;" onclick="tryOpenSwap();">Open Swap</button>
+						</div>
+						<div id="refund_button" style="margin-top: 10px; display: none;">
+							<button  style="font-size: 26px; width: 200px;" onclick="tryRefund();">Refund</button>
+						</div>
+						<div id="fiat_received_button" style="margin-top: 10px; display: none;">
+							<button style="font-size: 26px; min-width: 200px;" onclick="tryClose();">Fiat Received</button>
+						</div>
+					</div>
+					<div id="get_eth_actions" style="display: none;">
+						<div id="fiat_col_button" style="margin-top: 10px; display: none;">
+							<label>Collateral Required: <span id="get_eth_collateral">0</span> ETH</label><br>
+							<button style="font-size: 26px; min-width: 300px;" onclick="tryAddCollateral();">Send ETH Collateral</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>
