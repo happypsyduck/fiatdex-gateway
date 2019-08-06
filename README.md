@@ -12,7 +12,9 @@ This is a browser based application and is mobile ready. You need to follow thes
 * Setup a localhost server which has access to the downloaded index.html file
 * Open file in browser via localhost server
 
-Or if you are unable to setup a localhost server, you can access the gateway via here: https://happypsyduck.github.io/fiatdex-gateway/
+Or if you are unable to setup a localhost server, you can access the gateway via here: 
+https://happypsyduck.github.io/fiatdex-gateway/
+
 However, it is still recommended to run the application locally.
 
 ## Requirements
