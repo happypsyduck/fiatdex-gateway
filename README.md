@@ -1,5 +1,5 @@
 # Simple FiatDex Gateway
-This is a simple browser-based interface to interact with the FiatDex protocol. All code is client based via javascript and it does not connect to any centralized server. FiatDex is a trustless fiat to crypto swap process. It uses game theory to incentivise each trader to complete the swap, otherwise face punishment. There are no arbitrators required or verification needed. There are no trade limits but as this is new software, trade carefully.
+This is a simple browser-based interface to interact with the FiatDex protocol. All code is client based via javascript and it does not connect to any centralized server. FiatDex is a trustless fiat to crypto swap process. It uses game theory to incentivise each trader to complete a swap, otherwise face punishment for misbehaving. There are no arbitrators required or verification needed. There are no trade limits but as this is new software, trade responsibly.
 
 Contract source: https://etherscan.io/address/0x2c110867ca90e43d372c1c2e92990b00ea32818b (Same on Rinkeby testnet)
 
