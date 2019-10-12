@@ -16,12 +16,20 @@ var contract_addFiatTraderCollateral = "c6228485";
 var contract_refundSwap = "fe2510ee";
 var contract_closeSwap = "5c614552";
 
+// Javascript functions for the marketplace
+var marketplace_url = "http://happypsyduck.mywebcommunity.org/interface/"; // This is the address to the database that stores the market offers (can be changed)
+
 $( document ).ready(function() {
     // This is ran when the page has fully loaded
     checkMetaMaskExist();
     $("#contract_id").html(contractAddress);
     window.setTimeout(checkTradeID,1000);
     window.setTimeout(forceStatusCheck,15000);
+
+    //Also check for marketplace offers
+    setupCORSProxy();
+    getOpenOffers(0,0);
+    getOpenOffers(1,0);
 });
 
 function checkMetaMaskExist(){
@@ -394,4 +402,223 @@ function sendETHTransaction(transactionParameters){
 			console.log("An error occurred while pinging blockchain");
 		}
 	});
+}
+
+function setupCORSProxy(){
+	// We need a CORS Proxy to allow cross site requests through JQuery ajax
+	$.ajaxPrefilter(function(options) {
+	    if (options.crossDomain && jQuery.support.cors) {
+	        options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
+	    }
+	});
+}
+
+function showContactInfo(proto_open_order_view){
+	var open_order_view = $(proto_open_order_view); // Convert javascript object to jquery object
+	var open_order = open_order_view.parent().parent().parent().parent().parent(); // Get the div that contains the entire open order
+	open_order.children(".open_order_contact").toggle(); // Now show that div with the contact info
+}
+
+function addOpenOrder(order_id,type,price,fiat_symbol,quantity,min_quantity,payment_method,contact_method,contact_address){
+	// This will add an order to its respective marketplace
+	var order_prefix = "BUY";
+	if(type == 1){
+		order_prefix = "SELL";
+	}
+	var add_container = $("#buy_orders_container");
+	if(type == 1){
+		add_container = $("#sell_orders_container");
+	}
+	add_container.append(''+
+			'<div class="open_order">'+
+				'<table>'+
+					'<tbody>'+
+						'<tr class="open_order_header">'+
+							'<td>'+
+								''+order_prefix+' Price'+
+							'</td>'+
+							'<td>'+
+								'Quantity'+
+							'</td>'+
+							'<td>'+
+								'Minimum Quantity'+
+							'</td>'+
+							'<td>'+
+								'Payment Method'+
+							'</td>'+
+							'<td>'+
+								'Contact'+
+							'</td>'+
+						'</tr>'+
+						'<tr class="open_order_details">'+
+							'<td>'+
+								''+price+' '+fiat_symbol.toUpperCase()+''+
+							'</td>'+
+							'<td>'+
+								''+quantity+' ETH'+
+							'</td>'+
+							'<td>'+
+								''+min_quantity+' ETH'+
+							'</td>'+
+							'<td>'+
+								''+payment_method+
+							'</td>'+
+							'<td>'+
+								'<span style="color: rgb(100,100,100); text-decoration: underline; cursor: pointer;" onclick="showContactInfo(this);">View</span>'+
+							'</td>'+
+						'</tr>'+				
+					'</tbody>'+
+				'</table>'+
+				'<div class="open_order_contact">'+
+					'<strong>Contact Method:</strong> '+contact_method+'<br>'+
+					'<strong>Contact Address:</strong> '+contact_address+
+					'<div style="position: absolute; bottom: 0px; right: 5px;">'+
+						'<span style="color: rgb(100,100,100); cursor: pointer; font-size: 12px;" onclick="removeMyOrder(\''+order_id+'\');">Remove Offer</small>'+
+					'</div>'+
+				'</div>'+
+			'</div>'+
+		'');
+}
+
+function removeMyOrder(order_id){
+	// Get the user code to remove the order
+	var code = prompt("Enter the Order Secret Code To Remove Order","");
+	if(code == null){return;}
+	$.post( marketplace_url,
+		{ 
+			request: "remove_offer",
+			id: order_id,
+			code: code }  //JSON format
+		, function(data){
+			if(data){
+				if(data == "Success"){
+					alert("Removed offer from database successfully!");
+				}else{
+					alert("Failed to removed offer from database.");
+				}
+			}
+		});
+}
+
+function postOffer(){
+	// This will take the offer form and send it to marketplace database
+	var order_type = $("#order_type").val();
+	var fiat_symbol = $("#input_fiat_symbol").val();
+	if(fiat_symbol.length > 5){
+		alert("Fiat Symbol has too many characters. Please use abbreviation.");
+		return;
+	}
+	var price = $("#input_price").val();
+	var quantity = $("#input_quantity").val();
+	var min_quantity = $("#input_min_quantity").val();
+	var pay_method = $("#input_payment_method").val();
+	if(pay_method.length > 20){
+		alert("Payment method text too long. Please shorten the text.");
+		return;
+	}
+	var contact_method = $("#input_contact_method").val();
+	if(contact_method.length > 20){
+		alert("Contact method text too long. Please shorten the text.");
+		return;		
+	}
+	var contact_add = $("#input_contact_add").val();
+	if(contact_add.length > 200){
+		alert("Contact Address text too long. Please shorten the text.");
+		return;		
+	}
+	var important = $("#important_box").val();
+
+	// Now post the data
+	$.post( marketplace_url,
+		{ 
+			request: "add_offer",
+			type: order_type,
+			fiat: fiat_symbol,
+			price: price,
+			quant: quantity,
+			min_quant: min_quantity,
+			pay_method: pay_method,
+			con_method: contact_method,
+			honeypot: important,
+			con_add: contact_add }  //JSON format
+		, function(data){
+			if(data){
+				// data should return the offer secret code, used to delete the offer earlier than 7 days by the user
+				$("#offer_form").hide();				
+				reloadMarket(order_type);
+				alert("Order posted! This is your Offer Secret Code:\n"+data);
+			}else{
+				alert("Failed to post offer to database");
+			}
+		});
+
+}
+
+function reloadMarket(type){
+	// This will clear the current list and reload them into view
+	if(type == 0){
+		$("#buy_orders_container").empty(); //Remove everything
+	}else{
+		$("#sell_orders_container").empty(); // Remove everything
+	}
+	// Then load the first page again (most recent orders)
+	getOpenOffers(type,0); // Will populate the respective list with open offers
+}
+
+function getOpenOffers(order_type, page){
+	// This method will try to get open offers from the server and add them to the page
+	var market_place = "buy";
+	if(order_type == 1){
+		market_place = "sell";
+	}
+
+	$.get( marketplace_url,
+		{ 
+			request: "get_offers",
+			market: market_place,
+			offer_page: page }  // JSON format
+		, function(data){
+			if(data){
+				if(data != "Failed"){
+					var offers = $.parseJSON(data);
+					if(offers.length == 0){
+						if(page == 0){
+							if(order_type == 0){
+								// There are no offers to show
+								$("#buy_orders_view").html("No Offers");
+							}else{
+								$("#sell_orders_view").html("No Offers");
+							}
+						}else{
+							if(order_type == 0){
+								// There are no more offers to show
+								$("#buy_orders_view").html("No More Offers");
+							}else{
+								$("#sell_orders_view").html("No More Offers");
+							}							
+						}
+						return;
+					}else if(offers.length < 10){
+						if(order_type == 0){
+							// There are no more offers to show
+							$("#buy_orders_view").html("No More Offers");
+						}else{
+							$("#sell_orders_view").html("No More Offers");
+						}						
+					}else if(offers.length >= 10){
+						// 10 is max offers per page
+						if(order_type == 0){
+							// Change the contents of the View More button
+							$("#buy_orders_view").html('<span style="text-decoration: underline; cursor: pointer;" onclick="getOpenOffers(0, '+(page+1)+');">View More...</span>');
+						}else{
+							$("#sell_orders_view").html('<span style="text-decoration: underline; cursor: pointer;" onclick="getOpenOffers(1, '+(page+1)+');">View More...</span>');
+						}						
+					}
+					for(var i = 0; i < offers.length; i++){
+						// Go through each offer and add them to the view
+						addOpenOrder(offers[i].offer_id,order_type,offers[i].price,offers[i].fiat,offers[i].quant,offers[i].min_quant,offers[i].pay,offers[i].contactm,offers[i].contacta);
+					}
+				}
+			}
+		});	
 }
