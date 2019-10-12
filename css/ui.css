@@ -32,16 +32,6 @@
 	cursor: pointer;
 }
 
-@media screen and (max-width: 991px) {
-	#send_eth_button{
-		border-radius: 4px 4px 0px 0px;
-	}
-
-	#get_eth_button{
-		border-radius: 0px;
-	}
-}
-
 .open_order{
 	border-radius: 5px; 
 	width: 100%; 
@@ -57,6 +47,7 @@
 .open_order > table{
 	width: 100%; 
 	table-layout: fixed;
+	word-wrap: break-word;
 }
 
 .open_order_header{
@@ -78,4 +69,24 @@
 .open_order_contact{
 	display: none;
 	background-color: rgb(220,220,255);
+}
+
+.remove_order_container{
+	position: absolute;
+	bottom: 0px;
+	right: 5px;
+}
+
+@media screen and (max-width: 991px) {
+	#send_eth_button{
+		border-radius: 4px 4px 0px 0px;
+	}
+
+	#get_eth_button{
+		border-radius: 0px;
+	}
+	.remove_order_container{
+		position: static;
+		text-align: center;
+	}
 }
