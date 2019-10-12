@@ -528,6 +528,8 @@ function postOffer(){
 	}
 	var important = $("#important_box").val();
 
+	$("#post_box").hide();
+
 	// Now post the data
 	$.post( marketplace_url,
 		{ 
@@ -542,6 +544,7 @@ function postOffer(){
 			honeypot: important,
 			con_add: contact_add }  //JSON format
 		, function(data){
+			$("#post_box").show();
 			if(data){
 				// data should return the offer secret code, used to delete the offer earlier than 7 days by the user
 				$("#offer_form").hide();				
