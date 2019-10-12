@@ -6,7 +6,7 @@
 <meta content="text/html; charset=UTF-8" http-equiv="content-type">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>Simple FiatDex Gateway</title>
+<title>The FiatDex Gateway</title>
 
 <script src="js/jquery.js"></script>
 <script src="js/bootstrap.js"></script>
@@ -26,9 +26,7 @@
 		<div class="col-md-8 col-md-offset-2" style="text-align: center; margin-bottom: 20px; margin-top: 50px;">
 			<span style="font-size: 48px;"><strong>FiatDex</strong> <span style="color: grey;">Gateway</span><br></span>
 			<span style="font-size: 16px;">A simple web interface to interact with the FiatDex protocol, a trustless and decentralized fiat to crypto
-				swap method. Read the <a href="whitepaper.pdf" target="_blank">whitepaper</a> then
-				join the <a href="https://t.me/joinchat/LKOC7hNpttszh22G6lEfyg" target="_blank">Telegram group</a> to find
-				trading partners.</span><br><br>
+				swap method. Read the <a href="whitepaper.pdf" target="_blank">whitepaper</a> then join the <a href="whitepaper.pdf" target="_blank">Telegram group</a> to enter the community.</span><br><br>
 			<div id="metamask_banner" onclick="metamaskButtonClick();">
 				<span id="metamask_text">Install MetaMask to interact with Ethereum blockchain</span><br>
 				<span style="font-size: 12px;">Contract: <strong><span id="contract_id">N/A</span></strong></span>
@@ -114,6 +112,81 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container marketing">
+	<div class="row featurette">
+		<div class="col-md-8 col-md-offset-2" style="text-align: center; margin-bottom: 20px; margin-top: 30px;">
+			<span style="font-size: 48px;"><strong>FiatDex</strong> <span style="color: grey;">Marketplace</span><br></span>
+			<span style="font-size: 16px;">A simple no-thrills marketplace to view and post anonymous fiat to crypto offers without needing to have a bank account
+				or go through a third party arbitrator.<br><br><strong>Open orders expire 7 days after posting.</strong></span>
+		</div>
+	</div>	
+	<div class="col-md-12" style="margin-bottom: 25px; margin-top: 10px;">
+		<div style="height: 1px; background-color: rgb(200,200,200); width: 90%; margin-left: auto; margin-right: auto; margin-bottom: 30px;"> </div>
+		<h4>ETH Buy Offers:</h4>
+		<br>
+		<div id="buy_orders_container">
+		</div>
+		<br>
+		<div style="font-size: 16px; color: rgb(150,150,150); text-align: center;" id="buy_orders_view"></div>
+	</div>	
+	<div class="col-md-12" style="margin-bottom: 30px; margin-top: 10px;">
+		<div style="height: 1px; background-color: rgb(200,200,200); width: 90%; margin-left: auto; margin-right: auto; margin-bottom: 30px;"> </div>
+		<h4>ETH Sell Offers:</h4>
+		<br>
+		<div id="sell_orders_container">
+		</div>
+		<br>
+		<div style="font-size: 16px; color: rgb(150,150,150); text-align: center;" id="sell_orders_view"></div>
+		<div style="height: 1px; background-color: rgb(200,200,200); width: 90%; margin-left: auto; margin-right: auto; margin-bottom: 10px; margin-top: 30px;"> </div>
+	</div>
+	<div class="col-md-6 col-md-offset-3" style="margin-bottom: 75px; text-align: center;">
+		<button style="font-size: 26px;" onclick="$('#offer_form').show(); location.href='#offer_form';">Make New Offer</button>
+		<div style="border: 1px solid rgb(200,200,200); margin-top: 15px; padding: 5px; text-align: left; font-size: 18px; display: none;" id="offer_form">
+			<label>Offer Type</label><br>
+			<select id="order_type">
+				<option value="0" selected>BUY</option>
+				<option value="1">SELL</option>
+			</select>
+			<br>
+			<br>
+			<label>Fiat Symbol</label>
+			<small><br>Write the symbol for the base fiat currency you are trading (CNY, AUD, USD, EUR) or base cryptocurrency you are trading (ZEC, XMR).</small>
+			<input id="input_fiat_symbol" type="text" placeholder="Fiat Symbol" style="width: 90%;">
+			<br>
+			<br>
+			<label>Price Per ETH</label>
+			<small><br>Directions: Enter the price per ETH based in the fiat currency.</small>
+			<input id="input_price" type="number" placeholder="Payment Method" style="width: 90%;">
+			<br>
+			<br>
+			<label>Quantity (ETH)</label><br>
+			<input id="input_quantity" type="number" placeholder="Maximum ETH quantity involved" style="width: 90%;">
+			<br>
+			<br>
+			<label>Minimum Quantity</label><br>
+			<input id="input_min_quantity" type="number" placeholder="Minimum ETH quantity involved" style="width: 90%;">
+			<br>
+			<br>
+			<label>Payment Method</label>
+			<small><br>Write a preferred payment method you wish to trade fiat, such as by PayPal, cash deposit, wire transfer, postal mail and etc...</small>
+			<input id="input_payment_method" type="text" placeholder="Payment Method" style="width: 90%;">
+			<br>
+			<br>
+			<label>Contact Method</label>
+			<input id="input_contact_method" type="text" placeholder="Email, Discord, Telegram, Reddit, IRC, etc..." style="width: 90%;">
+			<br>
+			<br>
+			<input type="text" id="important_box" style="display: none;">
+			<label>Contact Addresss</label>
+			<small><br>Enter your email address or username that is linked to your contact method so traders can reach you.</small>
+			<input id="input_contact_add" type="text" placeholder="Enter Here" style="width: 90%;">
+			<div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
+				<button style="font-size: 20px;" onclick="postOffer()">Post Offer</button>
 			</div>
 		</div>
 	</div>
