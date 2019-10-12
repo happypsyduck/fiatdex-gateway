@@ -161,15 +161,15 @@
 			<br>
 			<label>Price Per ETH</label>
 			<small><br>Directions: Enter the price per ETH based in the fiat currency.</small>
-			<input id="input_price" type="number" placeholder="Payment Method" style="width: 90%;">
+			<input id="input_price" type="number" step="0.01" placeholder="Payment Method" style="width: 90%;">
 			<br>
 			<br>
 			<label>Quantity (ETH)</label><br>
-			<input id="input_quantity" type="number" placeholder="Maximum ETH quantity involved" style="width: 90%;">
+			<input id="input_quantity" type="number" step="0.00000001" placeholder="Maximum ETH quantity involved" style="width: 90%;">
 			<br>
 			<br>
 			<label>Minimum Quantity</label><br>
-			<input id="input_min_quantity" type="number" placeholder="Minimum ETH quantity involved" style="width: 90%;">
+			<input id="input_min_quantity" type="number" step="0.00000001" placeholder="Minimum ETH quantity involved" style="width: 90%;">
 			<br>
 			<br>
 			<label>Payment Method</label>
@@ -185,8 +185,8 @@
 			<label>Contact Addresss</label>
 			<small><br>Enter your email address or username that is linked to your contact method so traders can reach you.</small>
 			<input id="input_contact_add" type="text" placeholder="Enter Here" style="width: 90%;">
-			<div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
-				<button style="font-size: 20px;" onclick="postOffer()">Post Offer</button>
+			<div style="text-align: center; margin-top: 20px; margin-bottom: 10px;" id="post_box">
+				<button style="font-size: 20px;" onclick="postOffer();">Post Offer</button>
 			</div>
 		</div>
 	</div>
