@@ -41,3 +41,41 @@
 		border-radius: 0px;
 	}
 }
+
+.open_order{
+	border-radius: 5px; 
+	width: 100%; 
+	box-shadow: 1px 1px 3px rgb(150,150,150); 
+	margin-right: auto; 
+	margin-left: auto;
+	text-align: center;
+	position: relative;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.open_order > table{
+	width: 100%; 
+	table-layout: fixed;
+}
+
+.open_order_header{
+	color: rgb(100,100,100);
+}
+
+.open_order_header > td{
+	padding: 2px;
+}
+
+.open_order_details{
+	font-size: 20px;
+}
+
+.open_order_details > td{
+	padding: 2px;
+}
+
+.open_order_contact{
+	display: none;
+	background-color: rgb(220,220,255);
+}
