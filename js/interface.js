@@ -472,7 +472,7 @@ function addOpenOrder(order_id,type,price,fiat_symbol,quantity,min_quantity,paym
 				'<div class="open_order_contact">'+
 					'<strong>Contact Method:</strong> '+contact_method+'<br>'+
 					'<strong>Contact Address:</strong> '+contact_address+
-					'<div style="position: absolute; bottom: 0px; right: 5px;">'+
+					'<div class="remove_order_container">'+
 						'<span style="color: rgb(100,100,100); cursor: pointer; font-size: 12px;" onclick="removeMyOrder(\''+order_id+'\');">Remove Offer</small>'+
 					'</div>'+
 				'</div>'+
