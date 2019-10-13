@@ -26,9 +26,9 @@ if(isset($_GET["request"])){
 		// Now check database for matching offers
 		$all_offers = array();
 		if(file_exists($database_fullpath) != false){
-			// If page is 0, delete old offers (> 7 days)
+			// If page is 0 and viewing buy orders, check to delete old offers (> 7 days)
 			$db = connectDatabase($database_fullpath);
-			if($page == 0){
+			if($page == 0 && $market_type == 0){
 				$statement = $db->prepare("Delete From OFFERS Where offer_time < :time;"); // Prepare the statement
 				$statement->bindValue(":time",time() - 86400*7); // Anything older than 7 days gets deleted
 				$statement->execute();
@@ -134,12 +134,15 @@ if(isset($_GET["request"])){
 		$offer_id = bin2hex(openssl_random_pseudo_bytes(12)); // Create an offer_ID ( probably unique)
 		$offer_secret = bin2hex(openssl_random_pseudo_bytes(12)); // Create a secret for the offer, in case user wants to delete
 
+		// Store the hash of the secret in the database in case database is exposed
+		$secret_hash = hash("sha256",$offer_secret);
+
 		// Now create the new offer
 		$myquery = 'Insert Into OFFERS (offer_id, offer_secret, offer_type, offer_time, fiat_symbol, price, quantity, min_quantity, payment_method, contact_method, contact_address) 
-		Values (:my_id, :my_secret, :my_type, :my_time, :my_fiat, :my_price, :my_quant, :my_min_quant, :my_pay, :my_con_met, :my_con_add);';
+		Values (:my_id, :my_secret_hash, :my_type, :my_time, :my_fiat, :my_price, :my_quant, :my_min_quant, :my_pay, :my_con_met, :my_con_add);';
 		$statement = $db->prepare($myquery);
 		$statement->bindValue(":my_id",$offer_id);
-		$statement->bindValue(":my_secret",$offer_secret);
+		$statement->bindValue(":my_secret_hash",$secret_hash);
 		$statement->bindValue(":my_type",$order_type);
 		$statement->bindValue(":my_time",$ctime);
 		$statement->bindValue(":my_fiat",$fiat_symbol);
@@ -169,13 +172,16 @@ if(isset($_GET["request"])){
 		if(strlen($order_secret) > 30){exit;}
 		if(validateText($order_secret) == false){exit;}
 
+		// Obtain secret hash and compare to database hash
+		$secret_hash = hash("sha256",$order_secret);
+
 		// Now remove this order from the database if present
 		if(file_exists($database_fullpath) != false){
 			// If page is 0, delete old offers (> 7 days)
 			$db = connectDatabase($database_fullpath);
-			$statement = $db->prepare("Delete From OFFERS Where offer_id = :my_id And offer_secret = :my_secret;"); // Prepare the statement
+			$statement = $db->prepare("Delete From OFFERS Where offer_id = :my_id And offer_secret = :my_secret_hash;"); // Prepare the statement
 			$statement->bindValue(":my_id",$order_id); 
-			$statement->bindValue(":my_secret",$order_secret); 
+			$statement->bindValue(":my_secret_hash",$secret_hash); 
 			$statement->execute();
 			$lines_changed = $statement->rowCount();
 			$statement->closeCursor();
