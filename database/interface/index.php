@@ -170,7 +170,7 @@ if(isset($_GET["request"])){
 
 		$order_secret = $_POST["code"];
 		if(strlen($order_secret) > 30){exit;}
-		if(validateText($order_secret) == false){exit;}
+		if(validateSymbol($order_secret) == false){exit;}
 
 		// Obtain secret hash and compare to database hash
 		$secret_hash = hash("sha256",$order_secret);
