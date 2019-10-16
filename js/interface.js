@@ -484,6 +484,10 @@ function removeMyOrder(order_id){
 	// Get the user code to remove the order
 	var code = prompt("Enter the Order Secret Code To Remove Order","");
 	if(code == null){return;}
+	if(code.length > 30 || code.length < 1){
+		alert("Order Secret Code is invalid");
+		return;
+	}
 	$.post( marketplace_url,
 		{ 
 			request: "remove_offer",
@@ -494,7 +498,7 @@ function removeMyOrder(order_id){
 				if(data == "Success"){
 					alert("Removed offer from database successfully!");
 				}else{
-					alert("Failed to removed offer from database.");
+					alert("Failed to remove offer from database.");
 				}
 			}
 		});
