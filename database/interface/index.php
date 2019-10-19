@@ -11,10 +11,10 @@ if(isset($_GET["callback"])){
 	if(validateSymbol($callback_name) === false){exit;}
 }
 
-header("Content-Type: application/javascript"); //Force browser to see it as Javascript
-
 // Because we are using JSONP, all requests are get
 if(isset($_GET["request"])){
+	header("Content-Type: application/javascript"); //Force browser to see it as Javascript
+
 	$request = $_GET["request"];
 	if($request == "get_offers"){
 		$market = $_GET["market"];
@@ -206,6 +206,7 @@ if(isset($_GET["request"])){
 		exit;
 	}
 }else{
+	echo "This FiatDex database must be queried by JSONP";
 	exit;
 }
 
