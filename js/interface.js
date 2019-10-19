@@ -27,7 +27,6 @@ $( document ).ready(function() {
     window.setTimeout(forceStatusCheck,15000);
 
     //Also check for marketplace offers
-    setupCORSProxy();
     getOpenOffers(0,0);
     getOpenOffers(1,0);
 });
@@ -404,15 +403,6 @@ function sendETHTransaction(transactionParameters){
 	});
 }
 
-function setupCORSProxy(){
-	// We need a CORS Proxy to allow cross site requests through JQuery ajax
-	$.ajaxPrefilter(function(options) {
-	    if (options.crossDomain && jQuery.support.cors) {
-	        options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
-	    }
-	});
-}
-
 function showContactInfo(proto_open_order_view){
 	var open_order_view = $(proto_open_order_view); // Convert javascript object to jquery object
 	var open_order = open_order_view.parent().parent().parent().parent().parent(); // Get the div that contains the entire open order
@@ -488,20 +478,28 @@ function removeMyOrder(order_id){
 		alert("Order Secret Code is invalid");
 		return;
 	}
-	$.post( marketplace_url,
-		{ 
+
+	// We are using JSONP so it will be a get request
+	$.ajax({
+		type: 'GET',
+		url: marketplace_url,
+		data: { 
 			request: "remove_offer",
 			id: order_id,
-			code: code }  //JSON format
-		, function(data){
+			code: code },  //JSON format
+		dataType: 'jsonp',
+		success: function( data ) {
 			if(data){
-				if(data == "Success"){
+				if(data.result == "Success"){
 					alert("Removed offer from database successfully!");
 				}else{
 					alert("Failed to remove offer from database.");
 				}
+			}else{
+				alert("Failed to remove offer from database.");
 			}
-		});
+		}
+	});
 }
 
 function postOffer(){
@@ -534,9 +532,11 @@ function postOffer(){
 
 	$("#post_box").hide();
 
-	// Now post the data
-	$.post( marketplace_url,
-		{ 
+	// We are using JSONP so it will be a get request
+	$.ajax({
+		type: 'GET',
+		url: marketplace_url,
+		data: { 
 			request: "add_offer",
 			type: order_type,
 			fiat: fiat_symbol,
@@ -546,19 +546,20 @@ function postOffer(){
 			pay_method: pay_method,
 			con_method: contact_method,
 			honeypot: important,
-			con_add: contact_add }  //JSON format
-		, function(data){
+			con_add: contact_add },  //JSON format
+		dataType: 'jsonp',
+		success: function( data ) {
 			$("#post_box").show();
 			if(data){
 				// data should return the offer secret code, used to delete the offer earlier than 7 days by the user
 				$("#offer_form").hide();				
 				reloadMarket(order_type);
-				alert("Order posted! This is your Offer Secret Code:\n"+data);
+				alert("Order posted! This is your Offer Secret Code:\n"+data.result);
 			}else{
 				alert("Failed to post offer to database");
 			}
-		});
-
+		}
+	});
 }
 
 function reloadMarket(type){
@@ -579,53 +580,53 @@ function getOpenOffers(order_type, page){
 		market_place = "sell";
 	}
 
-	$.get( marketplace_url,
-		{ 
-			request: "get_offers",
-			market: market_place,
-			offer_page: page }  // JSON format
-		, function(data){
+	$.ajax({
+		type: 'GET',
+		url: marketplace_url,
+		data: { request: "get_offers", market: market_place, offer_page: page },  // JSON format
+		dataType: 'jsonp',
+		success: function( data ) {
 			if(data){
-				if(data != "Failed"){
-					var offers = $.parseJSON(data);
-					if(offers.length == 0){
-						if(page == 0){
-							if(order_type == 0){
-								// There are no offers to show
-								$("#buy_orders_view").html("No Offers");
-							}else{
-								$("#sell_orders_view").html("No Offers");
-							}
+				var offers = data;
+				if(offers.length == 0){
+					if(page == 0){
+						if(order_type == 0){
+							// There are no offers to show
+							$("#buy_orders_view").html("No Offers");
 						}else{
-							if(order_type == 0){
-								// There are no more offers to show
-								$("#buy_orders_view").html("No More Offers");
-							}else{
-								$("#sell_orders_view").html("No More Offers");
-							}							
+							$("#sell_orders_view").html("No Offers");
 						}
-						return;
-					}else if(offers.length < 10){
+					}else{
 						if(order_type == 0){
 							// There are no more offers to show
 							$("#buy_orders_view").html("No More Offers");
 						}else{
 							$("#sell_orders_view").html("No More Offers");
-						}						
-					}else if(offers.length >= 10){
-						// 10 is max offers per page
-						if(order_type == 0){
-							// Change the contents of the View More button
-							$("#buy_orders_view").html('<span style="text-decoration: underline; cursor: pointer;" onclick="getOpenOffers(0, '+(page+1)+');">View More...</span>');
-						}else{
-							$("#sell_orders_view").html('<span style="text-decoration: underline; cursor: pointer;" onclick="getOpenOffers(1, '+(page+1)+');">View More...</span>');
-						}						
+						}							
 					}
-					for(var i = 0; i < offers.length; i++){
-						// Go through each offer and add them to the view
-						addOpenOrder(offers[i].offer_id,order_type,offers[i].price,offers[i].fiat,offers[i].quant,offers[i].min_quant,offers[i].pay,offers[i].contactm,offers[i].contacta);
-					}
+					return;
+				}else if(offers.length < 10){
+					if(order_type == 0){
+						// There are no more offers to show
+						$("#buy_orders_view").html("No More Offers");
+					}else{
+						$("#sell_orders_view").html("No More Offers");
+					}						
+				}else if(offers.length >= 10){
+					// 10 is max offers per page
+					if(order_type == 0){
+						// Change the contents of the View More button
+						$("#buy_orders_view").html('<span style="text-decoration: underline; cursor: pointer;" onclick="getOpenOffers(0, '+(page+1)+');">View More...</span>');
+					}else{
+						$("#sell_orders_view").html('<span style="text-decoration: underline; cursor: pointer;" onclick="getOpenOffers(1, '+(page+1)+');">View More...</span>');
+					}						
+				}
+				for(var i = 0; i < offers.length; i++){
+					// Go through each offer and add them to the view
+					addOpenOrder(offers[i].offer_id,order_type,offers[i].price,offers[i].fiat,offers[i].quant,offers[i].min_quant,offers[i].pay,offers[i].contactm,offers[i].contacta);
 				}
 			}
-		});	
+		}
+	});
+
 }
