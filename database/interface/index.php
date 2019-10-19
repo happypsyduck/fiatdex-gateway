@@ -5,7 +5,15 @@
 $database_fullpath = "../market.db"; // Database is stored above the webroot
 date_default_timezone_set("UTC");
 
-// Handle the GET requests first
+$callback_name = "undefined";
+if(isset($_GET["callback"])){
+	$callback_name = $_GET["callback"];
+	if(validateSymbol($callback_name) === false){exit;}
+}
+
+header("Content-Type: application/javascript"); //Force browser to see it as Javascript
+
+// Because we are using JSONP, all requests are get
 if(isset($_GET["request"])){
 	$request = $_GET["request"];
 	if($request == "get_offers"){
@@ -57,53 +65,47 @@ if(isset($_GET["request"])){
 			$statement->closeCursor();
 			$db = null;
 		}
-
-		echo json_encode($all_offers);
-	}else{
-		exit; // Should not have any other type of get requests
-	}
-}else if(isset($_POST["request"])){
-	// Post data has more varied responses
-	$request = $_POST["request"];
-	if($request == "add_offer"){
+		
+		echo $callback_name."(".json_encode($all_offers).")";
+	}else if($request == "add_offer"){
 		// First validate the input from the user
-		$important = $_POST["honeypot"]; // A honeypot for bots who try to auto submit
+		$important = $_GET["honeypot"]; // A honeypot for bots who try to auto submit
 		if(strlen($important) > 0){exit;}
 
-		$order_type = (int)$_POST["type"];
+		$order_type = (int)$_GET["type"];
 		if($order_type != 1 && $order_type != 0){exit;}
 
-		$fiat_symbol = $_POST["fiat"];
+		$fiat_symbol = $_GET["fiat"];
 		if(strlen($fiat_symbol) > 5){exit;}
 		if(validateSymbol($fiat_symbol) == false){exit;}
 		$fiat_symbol = sanitizeText(strtoupper($fiat_symbol)); // Remove potential injection code
 
-		$price = $_POST["price"];
+		$price = $_GET["price"];
 		if(strlen($price) > 20){exit;}
 		if(validateSymbol($price) == false){exit;}
 		$price = sanitizeText(strtoupper($price)); // Remove potential injection code
 
-		$quantity = $_POST["quant"];
+		$quantity = $_GET["quant"];
 		if(strlen($quantity) > 20){exit;}
 		if(validateText($quantity) == false){exit;}
 		$quantity = sanitizeText(strtoupper($quantity)); // Remove potential injection code
 
-		$min_quantity = $_POST["min_quant"];
+		$min_quantity = $_GET["min_quant"];
 		if(strlen($min_quantity) > 20){exit;}
 		if(validateText($min_quantity) == false){exit;}
 		$min_quantity = sanitizeText(strtoupper($min_quantity)); // Remove potential injection code
 
-		$payment_method = $_POST["pay_method"];
+		$payment_method = $_GET["pay_method"];
 		if(strlen($payment_method) > 20){exit;}
 		if(validateText($payment_method) == false){exit;}
 		$payment_method = sanitizeText($payment_method); // Remove potential injection code
 
-		$contact_method = $_POST["con_method"];
+		$contact_method = $_GET["con_method"];
 		if(strlen($contact_method) > 20){exit;}
 		if(validateText($contact_method) == false){exit;}
 		$contact_method = sanitizeText($contact_method); // Remove potential injection code
 
-		$contact_address = $_POST["con_add"];
+		$contact_address = $_GET["con_add"];
 		if(strlen($contact_address) > 200){exit;}
 		if(validateText($contact_address) == false){exit;}
 		$contact_address = sanitizeText($contact_address); // Remove potential injection code
@@ -160,20 +162,26 @@ if(isset($_GET["request"])){
 		}
 	    $db = null;
 
-	    echo $offer_secret; // Now return the secret that the user can use to remove the order
+	    $response = array();
+	    $response["result"] = $offer_secret;
+
+	    echo $callback_name."(".json_encode($response).")";
 
 	}else if($request == "remove_offer"){
 
-		$order_id = $_POST["id"];
+		$order_id = $_GET["id"];
 		if(strlen($order_id) > 30){exit;}
 		if(validateSymbol($order_id) == false){exit;}
 
-		$order_secret = $_POST["code"];
+		$order_secret = $_GET["code"];
 		if(strlen($order_secret) > 30){exit;}
 		if(validateSymbol($order_secret) == false){exit;}
 
 		// Obtain secret hash and compare to database hash
 		$secret_hash = hash("sha256",$order_secret);
+
+		$response = array();
+	    $response["result"] = "Failure";
 
 		// Now remove this order from the database if present
 		if(file_exists($database_fullpath) != false){
@@ -188,12 +196,11 @@ if(isset($_GET["request"])){
 			$db = null;
 
 			if($lines_changed > 0){
-				echo "Success";
-				exit;
+				$response["result"] = "Success";
 			}
 		}
 
-		echo "Failure";
+		echo $callback_name."(".json_encode($response).")";
 
 	}else{
 		exit;
