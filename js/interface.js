@@ -17,7 +17,7 @@ var contract_refundSwap = "fe2510ee";
 var contract_closeSwap = "5c614552";
 
 // Javascript functions for the marketplace
-var marketplace_url = "https://fiatdex-proxy.herokuapp.com/"; // This is the address to the database that stores the market offers (can be changed)
+var marketplace_url = "https://fiatdex-proxy.herokuapp.com/"; // This is the address to proxy to the FiatDex database, can be changed to directly
 
 $( document ).ready(function() {
     // This is ran when the page has fully loaded
