@@ -8,7 +8,7 @@ Github Web Interface: https://happypsyduck.github.io/fiatdex-gateway/
 
 The FiatDex Marketplace is a simple interface to post buy and sell ETH offers. Users do not need to login and the offer data is stored up to 7 days from posting. This requires a centralized service to store offer data as SQLite database. Currently that server location is at: http://happypsyduck.mywebcommunity.org/interface/
 
-Check the database folder to view the server code to setup your own orderbook interface. A CORS proxy is used to allow cross site requests.
+Check the database folder to view the server code to setup your own orderbook interface. A proxy is used to allow cross site requests at: https://fiatdex-proxy.herokuapp.com/
 
 ## Learn More
 Read the whitepaper to learn more about the process and how to trade.
