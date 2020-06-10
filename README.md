@@ -8,7 +8,7 @@ Contract source: https://etherscan.io/address/0x75a2a05b8a21568f5e052b6bbcfb7996
 # FiatDex Marketplace
 Github Web Interface: https://happypsyduck.github.io/fiatdex-gateway/#marketplace
 
-The FiatDex Marketplace is a simple interface to post buy and sell ETH offers. Users do not need to login and the offer data is stored up to 7 days from posting. This requires a centralized service to store offer data as SQLite database. Currently that server location is at: http://happypsyduck.mywebcommunity.org/interface/
+The FiatDex Marketplace is a simple interface to post buy and sell DAI offers. Users do not need to login and the offer data is stored up to 7 days from posting. This requires a centralized service to store offer data as SQLite database. Currently that server location is at: http://happypsyduck.mywebcommunity.org/interface/
 
 Check the database folder to view the server code to setup your own orderbook interface. A proxy is used to allow cross site requests at: https://fiatdex-proxy.herokuapp.com/
 
