@@ -26,34 +26,64 @@
 		<div class="col-md-8 col-md-offset-2" style="text-align: center; margin-bottom: 20px; margin-top: 50px;">
 			<span style="font-size: 48px;"><strong>FiatDex</strong> <span style="color: grey;">Gateway</span><br></span>
 			<span style="font-size: 16px;">A simple web interface to interact with the FiatDex protocol, a trustless and decentralized fiat to crypto
-				swap method. Read the <a href="whitepaper.pdf" target="_blank">whitepaper</a> then join the <a href="https://t.me/joinchat/LKOC7hNpttszh22G6lEfyg" target="_blank">Telegram group</a> to enter the community.</span><br><br>
+				swap method. Read the <a href="whitepaper.pdf" target="_blank">whitepaper</a> then join the <a href="https://t.me/joinchat/LKOC7hNpttszh22G6lEfyg" target="_blank">Telegram group</a> to enter the community. The Ethereum token MakerDAO's DAI is used because of its price stability. Learn more about it <a href="https://makerdao.com/" target="_blank">here</a>.</span><br><br>
 			<div id="metamask_banner" onclick="metamaskButtonClick();">
 				<span id="metamask_text">Install MetaMask to interact with Ethereum blockchain</span><br>
 				<span style="font-size: 12px;">Contract: <strong><span id="contract_id">N/A</span></strong></span>
 			</div>
 		</div>
+		<div class="col-md-6 col-md-offset-3" style="text-align: center; margin-bottom: 20px;">
+			<span id="how_to_banner" onclick="toggleHowToUse();">+ How to Use</span>
+			<div id="how_to_contents" style="display: none; font-size: 14px; margin-top: 10px; text-align: left;">
+				<ul>
+					<li>Connect your MetaMask extension to the decentralized web application. If you do not have MetaMask, install it into your browser.</li>
+					<li>
+						<div style="background-color: rgb(200,200,200); height: 1px; margin-top: 10px; margin-bottom: 10px;"> </div>
+						If you are sending DAI, tap the Sending DAI tab then tap Generate New to create a new trade ID.
+					</li>
+					<li>Enter the amount of DAI that you want to send to the fiat Trader.</li>
+					<li>Unlock the amount you are sending through the DAI contract or you can unlock all amounts.</li>
+					<li>Open the swap by sending the DAI amount and collateral.</li>
+					<li>Give your counterparty (the person sending fiat) the trade ID for that person to complete his/her side of the trade.</li>
+					<li>Once you have received the correct amount of fiat, tap Fiat Received to mark the swap finalized. The collateral of both traders will be returned to them and a <strong>1% fee</strong> will be subtracted from the DAI your counterparty receives from you.
+					<li>If your counterparty fails to put in his/her collateral, you can refund at anytime to redeem your full balance without any fees.</li>
+					<li>If your counterparty puts in the collateral but fails to send you proper fiat, you can abort the trade with a penalty of your choosing
+						between <strong>75-100%</strong> of the collateral. <strong>Be careful as this will deduct equally from your collateral too.</strong> The collateral of both traders will be returned minus the penalty and the sending amount will be returned to you. <strong>Only abort as a last resort.</strong>
+					<li>
+						<div style="background-color: rgb(200,200,200); height: 1px; margin-top: 10px; margin-bottom: 10px;"> </div>
+						If you are receiving DAI and sending fiat, tap the Receiving DAI tab then enter the trade ID your counterparty provided to you.
+					</li>
+					<li>Check the trade status of the swap to make sure the details are correct.</li>
+					<li>Unlock the amount you are sending as collateral through the DAI contract or you can unlock all amounts.</li>
+					<li>Add your collateral to the swap by sending the DAI collateral.</li>
+					<li>Now use a mutually agreed upon method to send fiat to your counterparty.</li>
+					<li>Once your counterparty has received your fiat, he/she will finalize the swap. The collateral of both traders will be returned to them and a <strong>1% fee</strong> will be subtracted from the DAI you receive from your counterparty.
+					<li>If your counterparty fails to finalize the swap after you send fiat or if you are unable to send fiat for any reason, you can abort the trade with a penalty of your choosing between <strong>2.5-100%</strong> of the collateral. <strong>Be careful as this will deduct equally from your collateral too.</strong> The collateral of both traders will be returned minus the penalty. <strong>Only abort as a last resort.</strong>
+				</ul>
+			</div>
+		</div>
 		<div class="col-md-8 col-md-offset-2" style="margin-bottom: 75px; margin-top: 25px;">
 			<div class="row featurette">
-				<div class="col-md-6" id="send_eth_button" onclick="togglePage(1);">
-					Sending ETH
+				<div class="col-md-6" id="send_dai_button" onclick="togglePage(1);">
+					Sending DAI
 				</div>
-				<div class="col-md-6" id="get_eth_button" onclick="togglePage(2);">
-					Receiving ETH
+				<div class="col-md-6" id="get_dai_button" onclick="togglePage(2);">
+					Receiving DAI
 				</div>
 			</div>
 			<div class="row featurette" style="background-color: rgb(240,240,240); border-radius: 0px 0px 4px 4px; padding-bottom: 20px;">
 				<div class="col-md-12">
-					<div id="send_eth_tradebox" style="margin-top: 10px;" class="row">
+					<div id="send_dai_tradebox" style="margin-top: 10px;" class="row">
 						<div class="col-md-8" style="padding: 2px;">
-							<input type="text" class="form-control" id="send_eth_id" style="height: 35px;" placeholder="Enter a tradeID">
+							<input type="text" class="form-control" id="send_dai_id" style="height: 35px;" placeholder="Enter or generate a trade ID">
 						</div>
 						<div class="col-md-4" style="text-align: center; padding: 2px;">
 							<button id="new_tradeID_button" style="height: 35px; width: 90%;" onclick="generateID();">Generate New</button>
 						</div>
 					</div>
-					<div id="get_eth_tradebox" style="margin-top: 10px; display: none; padding-left: 10px; padding-right: 10px;" class="row">
+					<div id="get_dai_tradebox" style="margin-top: 10px; display: none; padding-left: 10px; padding-right: 10px;" class="row">
 						<div class="col-md-12" style="padding: 2px; text-align: center;">
-							<input type="text" class="form-control" id="get_eth_id" style="height: 35px;" placeholder="Enter the tradeID">
+							<input type="text" class="form-control" id="get_dai_id" style="height: 35px;" placeholder="Enter the trade ID">
 						</div>
 					</div>
 				</div>
@@ -74,7 +104,7 @@
 							</tr>
 							<tr>
 								<td style="text-align: left; font-weight: bold;">Collateral Required:</td>
-								<td style="text-align: right;" id="eth_collateral">N/A</td>
+								<td style="text-align: right;" id="dai_collateral">N/A</td>
 							</tr>
 							<tr style="display: none;" id="fee_status">
 								<td style="text-align: left; font-weight: bold;">Trade Fee:</td>
@@ -87,29 +117,36 @@
 					</div>
 				</div>
 				<div style="text-align: center;">
-					<div id="send_eth_amount" style="padding: 10px; line-height: 5px; display: none;">
-						<input type="text" class="form-control" id="send_eth_amount_input" autocomplete="off" oninput="calculateCollateral();" placeholder="Amount of ETH going to fiat trader">
+					<div id="send_dai_amount" style="padding: 10px; line-height: 5px; display: none;">
+						<input type="text" class="form-control" id="send_dai_amount_input" autocomplete="off" oninput="calculateCollateral();" placeholder="Amount of DAI going to fiat trader">
 						<br>
-						<input type="text" class="form-control" id="send_eth_fiataddress" placeholder="Fiat trader ETH address">
+						<input type="text" class="form-control" id="send_dai_fiataddress" placeholder="Fiat trader Ethereum address">
 						<br><br>
-						<label>Collateral Required: <span id="send_eth_collateral">0</span> ETH</label>			
+						<label>Collateral Required: <span id="send_dai_collateral">0</span> DAI</label>			
 					</div>
-					<div id="send_eth_actions" style="display: none;">
+					<div id="unlock_swap_buttons" style="margin-top: 10px; display: none;">
+						<button style="font-size: 20px; width: 250px; margin-right: 15px; margin-left: 15px; margin-top: 2px; margin-bottom: 2px;" onclick="tryApprove(true);">Unlock All Amounts</button>
+						<button style="font-size: 20px; width: 250px; margin-right: 15px; margin-left: 15px; margin-top: 2px; margin-bottom: 2px;" onclick="tryApprove(false);">Unlock This Amount</button>
+					</div>
+					<div id="send_dai_actions" style="display: none;">
 						<div id="open_swap_button" style="margin-top: 10px;">
-							<button style="font-size: 26px; width: 200px;" onclick="tryOpenSwap();">Open Swap</button>
+							<button style="font-size: 26px; width: 200px;" onclick="tryOpenSwap();" disabled id="open_swap_inner_button">Open Swap</button>
 						</div>
 						<div id="refund_button" style="margin-top: 10px; display: none;">
 							<button  style="font-size: 26px; width: 200px;" onclick="tryRefund();">Refund</button>
 						</div>
 						<div id="fiat_received_button" style="margin-top: 10px; display: none;">
-							<button style="font-size: 26px; min-width: 200px;" onclick="tryClose();">Fiat Received</button>
+							<button style="font-size: 26px; min-width: 200px; margin-right: 15px; margin-left: 15px; margin-top: 2px; margin-bottom: 2px;" onclick="tryFinalize();">Fiat Received</button>
+							<button style="font-size: 26px; min-width: 200px; margin-right: 15px; margin-left: 15px; margin-top: 2px; margin-bottom: 2px;" onclick="tryDaiTraderAbort();">Abort</button>
 						</div>
 					</div>
-					<div id="get_eth_actions" style="display: none;">
+					<div id="get_dai_actions" style="display: none;">
 						<div id="fiat_col_button" style="margin-top: 10px; display: none;">
-							<label>Collateral Required: <span id="get_eth_collateral">0</span> ETH</label><br>
-							<label>Remember: Swap is irreversible after you send the collateral.</label><br>
-							<button style="font-size: 26px; min-width: 300px;" onclick="tryAddCollateral();">Send ETH Collateral</button>
+							<label>Collateral Required: <span id="get_dai_collateral">0</span> DAI</label><br>
+							<button style="font-size: 26px; min-width: 300px;" onclick="tryAddCollateral();" disabled id="fiat_col_inner_button">Send DAI Collateral</button>
+						</div>
+						<div id="fiat_abort_button" style="margin-top: 10px; display: none;">
+							<button style="font-size: 26px; min-width: 200px;" onclick="tryFiatTraderAbort();">Abort</button>
 						</div>
 					</div>
 				</div>
@@ -118,17 +155,17 @@
 	</div>
 </div>
 
-<div class="container marketing">
+<div class="container marketing" id="marketplace">
 	<div class="row featurette">
 		<div class="col-md-8 col-md-offset-2" style="text-align: center; margin-bottom: 20px; margin-top: 30px;">
 			<span style="font-size: 48px;"><strong>FiatDex</strong> <span style="color: grey;">Marketplace</span><br></span>
 			<span style="font-size: 16px;">A simple no-thrills marketplace to view and post anonymous fiat to crypto offers without needing to have a bank account
-				or go through a third party arbitrator.<br><br><strong>Open orders expire 7 days after posting.</strong></span>
+				or go through a third party arbitrator. The Ethereum token MakerDAO's DAI is used because of its price stability. Learn more about it <a href="https://makerdao.com/" target="_blank">here</a>.<br><br><strong>Open orders expire 7 days after posting.</strong></span>
 		</div>
 	</div>	
 	<div class="col-md-12" style="margin-bottom: 25px; margin-top: 10px;">
 		<div style="height: 1px; background-color: rgb(200,200,200); width: 90%; margin-left: auto; margin-right: auto; margin-bottom: 30px;"> </div>
-		<h4>ETH Buy Offers:</h4>
+		<h4>DAI Buy Offers:</h4>
 		<br>
 		<div id="buy_orders_container">
 		</div>
@@ -137,7 +174,7 @@
 	</div>	
 	<div class="col-md-12" style="margin-bottom: 30px; margin-top: 10px;">
 		<div style="height: 1px; background-color: rgb(200,200,200); width: 90%; margin-left: auto; margin-right: auto; margin-bottom: 30px;"> </div>
-		<h4>ETH Sell Offers:</h4>
+		<h4>DAI Sell Offers:</h4>
 		<br>
 		<div id="sell_orders_container">
 		</div>
@@ -160,17 +197,17 @@
 			<input id="input_fiat_symbol" type="text" placeholder="Fiat Symbol" style="width: 90%;">
 			<br>
 			<br>
-			<label>Price Per ETH</label>
-			<small><br>Directions: Enter the price per ETH based in the fiat currency.</small><br>
-			<input id="input_price" type="number" step="0.0001" placeholder="Payment Method" style="width: 90%;">
+			<label>Price Per DAI</label>
+			<small><br>Directions: Enter the price per DAI based in the fiat currency.</small><br>
+			<input id="input_price" type="number" step="0.0001" placeholder="Price" style="width: 90%;">
 			<br>
 			<br>
-			<label>Quantity (ETH)</label><br>
-			<input id="input_quantity" type="number" step="0.00000001" placeholder="Maximum ETH quantity involved" style="width: 90%;">
+			<label>Maximum Quantity (DAI)</label><br>
+			<input id="input_quantity" type="number" step="0.00000001" placeholder="Maximum DAI quantity involved" style="width: 90%;">
 			<br>
 			<br>
 			<label>Minimum Quantity</label><br>
-			<input id="input_min_quantity" type="number" step="0.00000001" placeholder="Minimum ETH quantity involved" style="width: 90%;">
+			<input id="input_min_quantity" type="number" step="0.00000001" placeholder="Minimum DAI quantity involved" style="width: 90%;">
 			<br>
 			<br>
 			<label>Payment Method</label>
