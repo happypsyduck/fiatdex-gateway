@@ -29,7 +29,7 @@ var marketplace_url = "https://fiatdex-proxy.herokuapp.com/"; // This is the add
 $( document ).ready(function() {
     // This is ran when the page has fully loaded
     checkMetaMaskExist();
-    $("#contract_id").html("<a href='https://etherscan.io/address/"+contractAddress+"' target='_blank' onclick='$(this).stopPropagation();'>"+contractAddress+"</a>");
+    $("#contract_id").html("<a href='https://etherscan.io/address/"+contractAddress+"' target='_blank' onclick='if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;'>"+contractAddress+"</a>");
     window.setTimeout(checkTradeID,1000);
     window.setTimeout(forceStatusCheck,15000);
 
