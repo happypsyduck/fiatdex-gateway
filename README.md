@@ -30,5 +30,9 @@ However, it is still recommended to run the application locally.
 * MetaMask (https://metamask.io) installed into browser
 * MakerDAO's DAI (DAI) for collateral (for both buyer and seller of DAI, 150% of trade amount)
 
+## Automated Audit Report
+Chainsecurity: https://securify.chainsecurity.com/report/136f91623c216b2d1dcde8f0288c697b694628688095d7d7fd888c0e3e842975
+Anchain AI: https://happypsyduck.github.io/fiatdex-gateway/anchain_audit.pdf (using solidity version 0.4.25)
+
 ## Disclaimer
-The FiatDex protocol is based on audited smart contract code but in itself is **not audited.** Keep this in mind when trading and do not trade with more funds then you are willing to lose. The code has been tested but please look at the smart contract itself and learn it before sending DAI to it. The code is provided as is without warranty. Use at your own risk.
+The FiatDex protocol is based on audited smart contract code and has had automated audits but has not **had a comprehensive human auditor**. Keep this in mind when trading and do not trade with more funds then you are willing to lose. The code has been tested but please look at the smart contract itself and learn it before sending DAI to it. The code is provided as is without warranty. Use at your own risk.
