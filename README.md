@@ -31,7 +31,7 @@ However, it is still recommended to run the application locally.
 * MakerDAO's DAI (DAI) for collateral (for both buyer and seller of DAI, 150% of trade amount)
 
 ## Automated Audit Reports
-Chainsecurity: https://securify.chainsecurity.com/report/136f91623c216b2d1dcde8f0288c697b694628688095d7d7fd888c0e3e842975#content_analysis
+Chainsecurity: https://securify.chainsecurity.com/report/136f91623c216b2d1dcde8f0288c697b694628688095d7d7fd888c0e3e842975
 
 Anchain AI: https://happypsyduck.github.io/fiatdex-gateway/anchain_audit.pdf (using solidity version 0.4.25)
 
