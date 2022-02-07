@@ -1,4 +1,4 @@
-# FiatDex Gateway v2
+# FiatDex Gateway v2 (Now retired)
 Github Web Interface: https://happypsyduck.github.io/fiatdex-gateway/
 
 This is a simple browser-based interface to interact with the FiatDex protocol. All code is client based via javascript and it does not connect to any centralized server. The marketplace listed below uses a centralized server to store offer data. FiatDex is a trustless fiat to crypto swap process. It uses game theory to incentivise each trader to complete a swap, otherwise face punishment for misbehaving. There are no arbitrators required or verification needed. There are no trade limits but as this is new software, trade responsibly and do not trade more than you are willing to lose.
